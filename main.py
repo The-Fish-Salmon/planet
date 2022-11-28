@@ -24,8 +24,13 @@ class SystemCelestialBody(turtle.Turtle):
         # add the stuff to the system
 
     def draw(self):
+        self.clear()
         self.dot(self.display_size)
         # draw stuff
+
+    def move(self):
+        self.setx(self.xcor() + self.velocity[0])
+        self.sety(self.ycor() + self.velocity[1])
 
 
 class System:
@@ -47,6 +52,12 @@ class System:
 
     def delstuff(self, stuff):
         self.stuffs.remove(stuff)
+
+    def update(self):
+        for stuff in self.stuffs:
+            stuff.move()
+            stuff.draw()
+        self.system.update()
 
 
 class Star(SystemCelestialBody):
