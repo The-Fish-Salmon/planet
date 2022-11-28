@@ -15,7 +15,7 @@ class SystemCelestialBody(turtle.Turtle):
         self.setposition(position)
         self.velocity = velocity
         # set parameters
-        self.display_size = math.log(self.mass, 1.1)
+        self.display_size = max(math.log(self.mass, 1.1), 15)
         # set display size of stuff, if just mass it too big so log
         self.penup()
         self.hideturtle()
@@ -59,6 +59,16 @@ class System:
             stuff.draw()
         self.system.update()
 
+    def gravity_acc(self, stuff1: SystemCelestialBody, stuff2: SystemCelestialBody):
+        force = stuff1.mass * stuff2.mass / (stuff1.distance(stuff2) ** 2)
+        angle = stuff1.towards(stuff2)
+        i = 1
+        for stuffs in stuff1, stuff2:
+            acceleration = force/stuffs.mass
+            acc_x = acceleration*np.cos(np.radians(angle))
+            acc_y = acceleration*np.sin(np.radians(angle))
+            stuffs.velocity = (stuffs.velocity[0] + (i * acc_x), stuffs.velocity[1] + (i * acc_y))
+            i = -1
 
 class Star(SystemCelestialBody):
     # Star object
