@@ -42,7 +42,7 @@ class System:
         self.system = turtle.Screen()
         # Give it a background
 
-        self.system.tracer(n=3, delay=10)#speed
+        self.system.tracer(n=2, delay=10)#speed
         # needed to draw stuff
         self.system.setup(width, length)
         self.system.bgcolor("black")
@@ -72,6 +72,11 @@ class System:
             acc_y = acceleration*np.sin(np.radians(angle))
             stuffs.velocity = (stuffs.velocity[0] + (i * acc_x), stuffs.velocity[1] + (i * acc_y))
             i = -1
+
+    def all_interactions(self):
+        for idx, first in enumerate(self.stuffs):
+            for second in self.stuffs[idx + 1:]:
+                self.gravity_acc(first, second)
 
 
 class Star(SystemCelestialBody):
