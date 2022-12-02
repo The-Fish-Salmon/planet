@@ -34,12 +34,15 @@ class SystemCelestialBody(turtle.Turtle):
 
 
 class System:
-    # Create an object for the system and interation og stuff
+    """
+    Create an object for the system and interation og stuff
+    """
     def __init__(self, width, length):
         # initialize system with width and length
         self.system = turtle.Screen()
         # Give it a background
-        self.system.tracer(0)
+
+        self.system.tracer(n=3, delay=10)#speed
         # needed to draw stuff
         self.system.setup(width, length)
         self.system.bgcolor("black")
@@ -69,6 +72,7 @@ class System:
             acc_y = acceleration*np.sin(np.radians(angle))
             stuffs.velocity = (stuffs.velocity[0] + (i * acc_x), stuffs.velocity[1] + (i * acc_y))
             i = -1
+
 
 class Star(SystemCelestialBody):
     # Star object
