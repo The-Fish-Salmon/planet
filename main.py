@@ -5,7 +5,7 @@ import numpy as np
 
 class SystemCelestialBody(turtle.Turtle):
     # An object that is used to give parameters to celestial bodies
-    def __init__(self, system, mass, position=(0, 0), velocity=(0, 0), radius = 0):
+    def __init__(self, system, mass, position=(0, 0), velocity=(0, 0), radius=0):
         # initialize body with parameters
         super(SystemCelestialBody, self).__init__()
         # Found it online, don't exactly know what it do
@@ -38,12 +38,13 @@ class System:
     """
     Create an object for the system and interation og stuff
     """
+
     def __init__(self, width, length):
         # initialize system with width and length
         self.system = turtle.Screen()
         # Give it a background
 
-        self.system.tracer(n=2, delay=10)#speed
+        self.system.tracer(n=2, delay=10)  # speed
         # needed to draw stuff
         self.system.setup(width, length)
         self.system.bgcolor("black")
@@ -55,6 +56,7 @@ class System:
         self.stuffs.append(stuff)
 
     def delstuff(self, stuff):
+        stuff.clear()
         self.stuffs.remove(stuff)
 
     def update(self):
@@ -63,49 +65,43 @@ class System:
             stuff.draw()
         self.system.update()
 
-    def gravity_acc(self, stuff1: SystemCelestialBody, stuff2: SystemCelestialBody):
+    @staticmethod
+    def gravity_acc(stuff1: SystemCelestialBody, stuff2: SystemCelestialBody):
         force = stuff1.mass * stuff2.mass / (stuff1.distance(stuff2) ** 2)
         angle = stuff1.towards(stuff2)
         i = 1
         for stuffs in stuff1, stuff2:
-            acceleration = force/stuffs.mass
-            acc_x = acceleration*np.cos(np.radians(angle))
-            acc_y = acceleration*np.sin(np.radians(angle))
+            acceleration = force / stuffs.mass
+            acc_x = acceleration * np.cos(np.radians(angle))
+            acc_y = acceleration * np.sin(np.radians(angle))
             stuffs.velocity = (stuffs.velocity[0] + (i * acc_x), stuffs.velocity[1] + (i * acc_y))
             i = -1
-    def check_collision(self, stuff1: SystemCelestialBody, stuff2: SystemCelestialBody):
-        if stuff1 == stuff2:
-            return False
-        d = math.sqrt(math.pow(stuff1.xcor() - stuff2.xcor(), 2) + math.pow(stuff1.ycor() - stuff2.ycor(), 2))
-        if d <= stuff1.radius + stuff2.radius:
-            return True
-        else:
-            return False
 
-        while True:
-            if stuff1 >= stuff2:
-                delstuff(stuff2)
-                stuff1_mass = stuff2_mass + stuff1_mass
+    def check_collision(self, stuff1, stuff2):
+        if stuff1.distance(stuff2) < stuff1.display_size / 2 + stuff2.display_size / 2:
+            if stuff1.mass >= stuff2.mass:
+                self.delstuff(stuff2)
+                stuff1.mass = stuff2.mass + stuff1.mass
             else:
-                delstuff(stuff1)
-                stuff2_mass = stuff2_mass + stuff1_mass
+                self.delstuff(stuff1)
+                stuff2.mass = stuff2.mass + stuff1.mass
 
     def all_interactions(self):
         for idx, first in enumerate(self.stuffs):
             for second in self.stuffs[idx + 1:]:
                 self.gravity_acc(first, second)
-                self.check_collision(first,second)
+                self.check_collision(first, second)
 
 
 class Star(SystemCelestialBody):
     # Star object
-    def __init__(self, system, mass, position=(0, 0), velocity=(0, 0), radius = 0):
+    def __init__(self, system, mass, position=(0, 0), velocity=(0, 0), radius=0):
         super().__init__(system, mass, position, velocity, radius)
         self.color('orange')
 
 
 class Planet(SystemCelestialBody):
     # Planet object
-    def __init__(self, system, mass, position=(0, 0), velocity=(0, 0), radius = 0):
+    def __init__(self, system, mass, position=(0, 0), velocity=(0, 0), radius=0):
         super().__init__(system, mass, position, velocity, radius)
         self.color('blue')
