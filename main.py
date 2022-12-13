@@ -5,13 +5,14 @@ import numpy as np
 
 class SystemCelestialBody(turtle.Turtle):
     # An object that is used to give parameters to celestial bodies
-    def __init__(self, system, mass, position=(0, 0), velocity=(0, 0)):
+    def __init__(self, system, mass, position=(0, 0), velocity=(0, 0), radius = 0):
         # initialize body with parameters
         super(SystemCelestialBody, self).__init__()
         # Found it online, don't exactly know what it do
         # I use it instead of a bunch of trash code that didn't work
         # it let the bodies that we give parameters to take it
         self.mass = mass
+        self.radius = radius
         self.setposition(position)
         self.velocity = velocity
         # set parameters
@@ -72,22 +73,39 @@ class System:
             acc_y = acceleration*np.sin(np.radians(angle))
             stuffs.velocity = (stuffs.velocity[0] + (i * acc_x), stuffs.velocity[1] + (i * acc_y))
             i = -1
+    def check_collision(self, stuff1: SystemCelestialBody, stuff2: SystemCelestialBody):
+        if stuff1 == stuff2:
+            return False
+        d = math.sqrt(math.pow(stuff1.xcor() - stuff2.xcor(), 2) + math.pow(stuff1.ycor() - stuff2.ycor(), 2))
+        if d <= stuff1.radius + stuff2.radius:
+            return True
+        else:
+            return False
+
+        while True:
+            if stuff1 >= stuff2:
+                delstuff(stuff2)
+                stuff1_mass = stuff2_mass + stuff1_mass
+            else:
+                delstuff(stuff1)
+                stuff2_mass = stuff2_mass + stuff1_mass
 
     def all_interactions(self):
         for idx, first in enumerate(self.stuffs):
             for second in self.stuffs[idx + 1:]:
                 self.gravity_acc(first, second)
+                self.check_collision(first,second)
 
 
 class Star(SystemCelestialBody):
     # Star object
-    def __init__(self, system, mass, position=(0, 0), velocity=(0, 0)):
-        super().__init__(system, mass, position, velocity)
+    def __init__(self, system, mass, position=(0, 0), velocity=(0, 0), radius = 0):
+        super().__init__(system, mass, position, velocity, radius)
         self.color('orange')
 
 
 class Planet(SystemCelestialBody):
     # Planet object
-    def __init__(self, system, mass, position=(0, 0), velocity=(0, 0)):
-        super().__init__(system, mass, position, velocity)
+    def __init__(self, system, mass, position=(0, 0), velocity=(0, 0), radius = 0):
+        super().__init__(system, mass, position, velocity, radius)
         self.color('blue')
